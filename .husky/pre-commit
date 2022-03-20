@@ -1,6 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm test
-npx branch-name-lint branch-name-lint.json
 npx lint-staged
