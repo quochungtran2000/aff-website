@@ -1,0 +1,129 @@
+@import-normalize;
+@import '~antd/dist/antd.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  h1 {
+    font-weight: 700;
+    font-size: 68px;
+    line-height: 82px;
+  }
+
+  h2 {
+    font-weight: 700;
+    font-size: 56px;
+    line-height: 68px;
+  }
+
+  h3 {
+    font-weight: 700;
+    font-size: 46px;
+    line-height: 56px;
+  }
+
+  h4 {
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 46px;
+  }
+
+  h5 {
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 36px;
+  }
+
+  h6 {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 30px;
+  }
+
+  .para-1 {
+    font-size: 16px;
+    line-height: 20px;
+  }
+
+  .para-2 {
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  .para-3 {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .para-4 {
+    font-size: 10px;
+    line-height: 14px;
+  }
+
+  .para-bold-1 {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 700;
+  }
+
+  .para-bold-2 {
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 700;
+  }
+
+  .para-bold-3 {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 700;
+  }
+
+  .para-bold-4 {
+    font-size: 10px;
+    line-height: 14px;
+    font-weight: 700;
+  }
+
+  .bg-secondary-gradient {
+    background: linear-gradient(
+      90deg,
+      #e3dab5 -0.82%,
+      #d5b783 50.4%,
+      #806c47 104.92%
+    );
+  }
+
+  .bg-blue-gradient {
+    background: linear-gradient(124.4deg, #0070f0 10.8%, #92c5ff 87.34%);
+  }
+
+  .customModal .ant-modal-content {
+    border-radius: 20px;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  color: '#003056';
+}
+
+.ant-table-cell {
+  text-align: center;
+}
+
+.customTable .ant-table-thead .ant-table-cell {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 400;
+  color: #00538f;
+  border: none;
+  background-color: #eff3f8;
+  text-align: center;
+}
+
+.customTable .ant-table-thead .ant-table-cell::before {
+  width: 0 !important;
+}
