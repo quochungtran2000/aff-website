@@ -6,24 +6,32 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { ProductResponse, ProductTemplateDetailResponse, ProductTemplateResponse } from 'types';
 import { DownOutlined } from '@ant-design/icons';
+import { useQuery } from 'react-query';
 
 export default function ProductDetailPage() {
-  const [product, setProduct] = useState<ProductTemplateDetailResponse>();
+  // const [product, setProduct] = useState<ProductTemplateDetailResponse>();
   const [products, setProducts] = useState<ProductTemplateResponse[]>([]);
 
   const [thumbnail, setThumbnail] = useState<string>('');
   const [productName, setProductName] = useState<string>('');
   const [price, setPrice] = useState<number>(0);
-  const { productId }: { productId: string } = useParams();
+  const { slug }: { slug: string } = useParams();
+  const productId = slug.replace('.html', '').split('-').pop()?.replace('p', '') + '';
 
-  useEffect(() => {
-    ProductApi.getProduct(+productId).then((data) => {
-      setProduct(data);
-    });
-  }, [productId]);
+  // useEffect(() => {
+  //   ProductApi.getProduct(+productId).then((data) => {
+  //     setProduct(data);
+  //   });
+  // }, [productId]);
   useEffect(() => {
     ProductApi.getProducts({ page: 3 }).then(({ data }) => setProducts(data));
   }, []);
+
+  const { data: product } = useQuery(['product'], () => ProductApi.getProduct(productId), {
+    onSuccess: (data) => {
+      document.title = data.productName;
+    },
+  });
 
   useEffect(() => {
     if (!product) return;

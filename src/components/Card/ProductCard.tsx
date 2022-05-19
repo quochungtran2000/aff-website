@@ -1,19 +1,20 @@
-import { ProductResponse, ProductTemplateResponse } from 'types';
+import { ProductTemplateResponse } from 'types';
 
 type IProps = {
   product: ProductTemplateResponse;
 };
 
 export default function ProductCard({ product }: IProps) {
-  const { price, productName, thumbnail, productTemplateId } = product;
+  const { price, productName, thumbnail, productTemplateId, slug } = product;
+  const productSlug = `${slug}-p${productTemplateId}.html`;
   return (
     <div className="max-w-sm bg-white rounded-lg shadow-md ">
       {/* <div className="max-w-sm bg-white rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700"></div> */}
-      <a href={`/product/${productTemplateId}`} target="_blank" rel="noreferrer">
+      <a href={`/product/${productSlug}`} target="_blank" rel="noreferrer">
         <img className="p-2 rounded-t-lg" src={thumbnail} alt="product image" />
       </a>
       <div className="px-2 pb-2">
-        <a href={`/product/${productTemplateId}`} target="_blank" rel="noreferrer">
+        <a href={`/product/${productSlug}`} target="_blank" rel="noreferrer">
           <h5
             className="text-xs font-semibold tracking-tight text-gray-900"
             style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 3, overflow: 'hidden' }}

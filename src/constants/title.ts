@@ -9,9 +9,14 @@ export const titles: {
     setTitle: () => 'Trang Chủ',
   },
   {
-    path: '/plant/:id',
-    param: 'id',
-    setTitle: (key) => `Cập nhật plant ${key}`,
+    path: '/product',
+    param: '',
+    setTitle: () => 'Danh sách sản phẩm',
+  },
+  {
+    path: '/product/:productId',
+    param: 'productId',
+    setTitle: (key) => `Chi tiết sản Phẩm ${key}`,
   },
   {
     path: '*',

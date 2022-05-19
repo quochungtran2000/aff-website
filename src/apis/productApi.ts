@@ -7,7 +7,7 @@ export const ProductApi = {
     const url = `/${productPath}`;
     return axiosClient.get(url, { params });
   },
-  getProduct: (productId: number): Promise<ProductTemplateDetailResponse> => {
+  getProduct: (productId: string): Promise<ProductTemplateDetailResponse> => {
     const url = `/${productPath}/${productId}`;
     return axiosClient.get(url);
   },

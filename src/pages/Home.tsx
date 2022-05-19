@@ -1,33 +1,41 @@
-import { Col, Divider, Row, Typography } from 'antd';
 import { ProductApi } from 'apis/productApi';
-import { BusinessIcon, BusinessUrl } from 'assets/svg';
 import ProductCard from 'components/Card/ProductCard';
 import MainLayout from 'components/Layout';
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { PagingResponse, ProductTemplateResponse } from 'types';
-import logo from '../assets/svg/business.svg';
-import { Button, Radio } from 'antd';
-import { DownloadOutlined, DownOutlined } from '@ant-design/icons';
+import { useHistory } from 'react-router-dom';
+import { ProductTemplateQuery } from 'types';
+import { Button, Skeleton } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import LoginForm from 'components/Login/LoginForm';
 import RegisterForm from 'components/Register/RegisterFrom';
-
-const { Text } = Typography;
+import { useQuery } from 'react-query';
+import useQueryParam from 'hooks/useQueryPrams';
+import updateQueryStringParameter from 'utils/updateQueryStringParameter';
+import { DEFAULT_PAGE_SIZE } from 'constants/app';
+import LoginModal from 'components/Login/LoginModal';
+import SkeletionProductCard from 'components/Card/SkeletionProductCard';
 
 const HomePage = (): JSX.Element => {
-  const DEFAULT_PAGE_SIZE = 12;
-  const [smartPhone, setSmartPhone] = useState<PagingResponse<ProductTemplateResponse>>();
-  const [monitor, setMonitor] = useState<PagingResponse<ProductTemplateResponse>>();
-  const [takeMonitor, setTakeMonitor] = useState<number>(DEFAULT_PAGE_SIZE);
-  const [takeSmartPhone, setTakeSmartPhone] = useState<number>(DEFAULT_PAGE_SIZE);
+  const queryParam = useQueryParam();
+  const page = 1;
+  const spz = Number(queryParam.get('spz')) || DEFAULT_PAGE_SIZE;
+  const mpz = Number(queryParam.get('mpz') + '') || DEFAULT_PAGE_SIZE;
 
-  useEffect(() => {
-    ProductApi.getProducts({ search: 'Điện thoại', page_size: takeSmartPhone }).then((data) => setSmartPhone(data));
-  }, [takeSmartPhone]);
+  const history = useHistory();
 
-  useEffect(() => {
-    ProductApi.getProducts({ search: 'Màn hình', page_size: takeMonitor }).then((data) => setMonitor(data));
-  }, [takeMonitor]);
+  const monitorParams: ProductTemplateQuery = { page, page_size: mpz, search: 'Màn hình' };
+  const smartPhoneParams: ProductTemplateQuery = { page, page_size: spz, search: 'Điện thoại' };
+
+  const monitorParam = JSON.parse(JSON.stringify(monitorParams));
+  const smartPhoneParam = JSON.parse(JSON.stringify(smartPhoneParams));
+
+  const { data: smartPhones, isLoading: smartPhoneLoading } = useQuery(['smartphones', smartPhoneParams], () =>
+    ProductApi.getProducts(smartPhoneParam)
+  );
+
+  const { data: monitors, isLoading: monitorLoading } = useQuery(['monitors', monitorParams], () =>
+    ProductApi.getProducts(monitorParam)
+  );
+
   return (
     <MainLayout>
       <section className="dark:bg-coolGray-800 dark:text-coolGray-100">
@@ -54,26 +62,39 @@ const HomePage = (): JSX.Element => {
         <div className="grid grid-cols-12 gap-4 py-6">
           <div className="col-start-3 col-span-8 bg-dark">
             <div className="space-y-2 pb-4">
-              <h5 className="font-bold leading-tight">Màn hình Máy tính</h5>
+              {!monitorLoading && <h5 className="font-bold leading-tight">Màn hình Máy tính</h5>}
+              {monitorLoading && <Skeleton.Input active />}
             </div>
             <div className="grid grid-cols-6 gap-4">
-              {monitor?.data?.map((product) => (
-                <ProductCard key={product.productTemplateId} product={product} />
-              ))}
+              {!monitorLoading &&
+                monitors?.data?.map((product) => <ProductCard key={product.productTemplateId} product={product} />)}
+
+              {monitorLoading &&
+                Array(mpz === DEFAULT_PAGE_SIZE ? mpz : mpz - DEFAULT_PAGE_SIZE)
+                  .fill(1)
+                  .map((i) => <SkeletionProductCard key={i} />)}
             </div>
           </div>
           <div className="col-start-3 col-span-8 mt-6 pb-6 mb-6">
-            {monitor && monitor?.total > takeMonitor && (
+            {!monitorLoading && monitors && monitors?.total > mpz && (
               <Button
                 shape="round"
                 type="text"
-                onClick={() => setTakeMonitor(takeMonitor + DEFAULT_PAGE_SIZE)}
+                onClick={() =>
+                  history.push({
+                    pathname: location.pathname,
+                    search: updateQueryStringParameter(location.search, {
+                      mpz: mpz + DEFAULT_PAGE_SIZE,
+                    }),
+                  })
+                }
                 className="w-full"
                 icon={<DownOutlined />}
               >
                 Xem thêm
               </Button>
             )}
+
             <br />
           </div>
         </div>
@@ -83,20 +104,31 @@ const HomePage = (): JSX.Element => {
         <div className="grid grid-cols-12 gap-4 py-6">
           <div className="col-start-3 col-span-8 bg-dark">
             <div className="space-y-2 pb-4">
-              <h5 className="font-bold leading-tight">Điện thoại di động</h5>
+              {!smartPhoneLoading && <h5 className="font-bold leading-tight">Điện thoại di động</h5>}
+              {smartPhoneLoading && <Skeleton.Input active />}
             </div>
             <div className="grid grid-cols-6 gap-4">
-              {smartPhone?.data?.map((product) => (
-                <ProductCard key={product.productTemplateId} product={product} />
-              ))}
+              {!smartPhoneLoading &&
+                smartPhones?.data?.map((product) => <ProductCard key={product.productTemplateId} product={product} />)}
+              {smartPhoneLoading &&
+                Array(spz === DEFAULT_PAGE_SIZE ? spz : spz - DEFAULT_PAGE_SIZE)
+                  .fill(1)
+                  .map((i) => <SkeletionProductCard key={i} />)}
             </div>
           </div>
           <div className="col-start-3 col-span-8 mt-6 pb-6 mb-6">
-            {smartPhone && smartPhone?.total > takeSmartPhone && (
+            {smartPhones && smartPhones?.total > spz && (
               <Button
                 shape="round"
                 type="text"
-                onClick={() => setTakeSmartPhone(takeSmartPhone + DEFAULT_PAGE_SIZE)}
+                onClick={() =>
+                  history.push({
+                    pathname: location.pathname,
+                    search: updateQueryStringParameter(location.search, {
+                      spz: spz + DEFAULT_PAGE_SIZE,
+                    }),
+                  })
+                }
                 className="w-full hover:bg-white"
                 icon={<DownOutlined />}
               >
@@ -107,10 +139,8 @@ const HomePage = (): JSX.Element => {
           </div>
         </div>
       </section>
+
       {/* <section className="bg-white w-full">
-        <div className="w-full" style={{ height: 400, backgroundColor: 'red' }}></div>
-      </section> */}
-      <section className="bg-white w-full">
         <div className="grid grid-cols-12 gap-4 py-6">
           <div className="col-start-3 col-span-4 bg-dark">
             <LoginForm />
@@ -119,7 +149,7 @@ const HomePage = (): JSX.Element => {
             <RegisterForm />
           </div>
         </div>
-      </section>
+      </section> */}
     </MainLayout>
   );
 };

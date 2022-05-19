@@ -13,6 +13,8 @@ import { logo, avatar } from 'assets/images';
 import sidebarMenu from 'constants/menu';
 import { Link, Redirect, useHistory } from 'react-router-dom';
 import React from 'react';
+import LoginModal from 'components/Login/LoginModal';
+import RegisterModal from 'components/Register/RegisterModal';
 
 type IProps = {
   children: ReactNode;
@@ -27,6 +29,8 @@ const { SubMenu } = Menu;
 
 export default function MainLayout(props: IProps) {
   const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [loginVisible, setLoginVisible] = useState<boolean>(false);
+  const [registerVisible, setRegisterVisible] = useState<boolean>(false);
   const { children, isLoading = false, isError, error } = props;
   const onSearch = (value: string) => console.log(value);
   const history = useHistory();
@@ -55,6 +59,17 @@ export default function MainLayout(props: IProps) {
     }
   };
 
+  const onLoginClick = () => {
+    setRegisterVisible(false);
+    setLoginVisible(true);
+  };
+
+  const onRegisterClick = () => {
+    setLoginVisible(false);
+    setRegisterVisible(true);
+  };
+  // const history = useHistory();
+
   return (
     <Spin size="large" spinning={isLoading}>
       <Layout className="min-h-screen">
@@ -62,12 +77,12 @@ export default function MainLayout(props: IProps) {
         <Header className="bg-white h-12 flex items-center justify-between fixed z-10 w-full border-b-1 shadow-2xl ">
           {/* <img src={logo} alt="logo" className="cursor-pointer" /> */}
           <div className="flex flex-row h-full items-center gap-x-3">
-            <Link to="/">
-              <h4>SSG SHOP</h4>
-            </Link>
+            {/* <Link to="/"> */}
+            <h4 onClick={() => history.push('/')}>SSG SHOP</h4>
+            {/* </Link> */}
 
-            <Link to="/product">Sản phẩm</Link>
-            <Link to="/">Bài Viết</Link>
+            <span onClick={() => history.push('/product')}>Sản phẩm</span>
+            <span onClick={() => history.push('/post')}>Bài Viết</span>
           </div>
           {/* <Search
             placeholder="input search text"
@@ -130,8 +145,10 @@ export default function MainLayout(props: IProps) {
             <SearchOutlined className="text-black mr-4" />
             <QuestionCircleOutlined className="text-black mr-4" />
             <BellOutlined className="text-black mr-4" />
-            <Button type="text">Sign In</Button>
-            <Button>Sign Up</Button>
+            <Button type="text" onClick={() => setLoginVisible(true)}>
+              Đăng nhập
+            </Button>
+            <Button onClick={() => setRegisterVisible(true)}>Đăng kí</Button>
             {/* <Dropdown
               overlay={
                 <Menu className="p-2">
@@ -188,6 +205,16 @@ export default function MainLayout(props: IProps) {
           {/* </Footer>/ */}
         </Layout>
       </Layout>
+      <LoginModal
+        isModalVisible={loginVisible}
+        onCancel={() => setLoginVisible(false)}
+        onRegisterClick={onRegisterClick}
+      />
+      <RegisterModal
+        isModalVisible={registerVisible}
+        onCancel={() => setRegisterVisible(false)}
+        onLoginClick={onLoginClick}
+      />
     </Spin>
   );
 }
