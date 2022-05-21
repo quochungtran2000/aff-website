@@ -1,7 +1,3 @@
-import { ReactNode, useState } from 'react';
-import { Dropdown, Layout, Menu, Spin, Input, Button } from 'antd';
-import MenuItem from 'antd/lib/menu/MenuItem';
-import CustomerFooter from './Footer';
 import {
   BellOutlined,
   MenuFoldOutlined,
@@ -9,12 +5,18 @@ import {
   QuestionCircleOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { logo, avatar } from 'assets/images';
-import sidebarMenu from 'constants/menu';
+import { Button, Dropdown, Input, Layout, Menu, Spin } from 'antd';
 import { Link, Redirect, useHistory } from 'react-router-dom';
-import React from 'react';
+import { ReactNode, useState } from 'react';
+import { avatar, logo } from 'assets/images';
+
+import CustomerFooter from './Footer';
 import LoginModal from 'components/Login/LoginModal';
+import MenuItem from 'antd/lib/menu/MenuItem';
+import React from 'react';
 import RegisterModal from 'components/Register/RegisterModal';
+import notification from 'utils/notification';
+import sidebarMenu from 'constants/menu';
 
 type IProps = {
   children: ReactNode;
@@ -78,7 +80,9 @@ export default function MainLayout(props: IProps) {
           {/* <img src={logo} alt="logo" className="cursor-pointer" /> */}
           <div className="flex flex-row h-full items-center gap-x-3">
             {/* <Link to="/"> */}
-            <h4 onClick={() => history.push('/')}>SSG SHOP</h4>
+            <h4 className="cursor-pointer" onClick={() => history.push('/')}>
+              SSG SHOP
+            </h4>
             {/* </Link> */}
 
             <span onClick={() => history.push('/product')}>Sản phẩm</span>
@@ -206,9 +210,9 @@ export default function MainLayout(props: IProps) {
         </Layout>
       </Layout>
       <LoginModal
+        onRegisterClick={onRegisterClick}
         isModalVisible={loginVisible}
         onCancel={() => setLoginVisible(false)}
-        onRegisterClick={onRegisterClick}
       />
       <RegisterModal
         isModalVisible={registerVisible}

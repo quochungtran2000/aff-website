@@ -1,15 +1,16 @@
+import { PagingResponse, ProductTemplateQuery, ProductTemplateResponse } from 'types';
+import { useEffect, useState } from 'react';
+
 import { Button } from 'antd';
+import { DEFAULT_PAGE_SIZE } from 'constants/app';
+import { DownOutlined } from '@ant-design/icons';
+import MainLayout from 'components/Layout';
 import { ProductApi } from 'apis/productApi';
 import ProductCard from 'components/Card/ProductCard';
-import MainLayout from 'components/Layout';
-import useQueryParam from 'hooks/useQueryPrams';
-import { useEffect, useState } from 'react';
-import { PagingResponse, ProductTemplateQuery, ProductTemplateResponse } from 'types';
-import { DownOutlined } from '@ant-design/icons';
-import { useHistory } from 'react-router-dom';
-import { DEFAULT_PAGE_SIZE } from 'constants/app';
-import { useQuery } from 'react-query';
 import SkeletionProductCard from 'components/Card/SkeletionProductCard';
+import { useHistory } from 'react-router-dom';
+import { useQuery } from 'react-query';
+import useQueryParam from 'hooks/useQueryPrams';
 
 export default function ProductPage() {
   // const [products, setProducts] = useState<PagingResponse<ProductTemplateResponse>>();
@@ -45,7 +46,9 @@ export default function ProductPage() {
             )}
             <div className="grid grid-cols-6 gap-4">
               {!loading &&
-                products?.data.map((product) => <ProductCard key={product.productTemplateId} product={product} />)}
+                products?.data?.data.map((product) => (
+                  <ProductCard key={product.productTemplateId} product={product} />
+                ))}
               {loading &&
                 Array(page_size === DEFAULT_PAGE_SIZE ? page_size : page_size - DEFAULT_PAGE_SIZE)
                   .fill(1)
@@ -59,7 +62,7 @@ export default function ProductPage() {
             <br />
           </div> */}
           <div className="col-start-3 col-span-8 mt-6 pb-6 mb-6">
-            {products && products?.total > page_size && (
+            {products && products?.data.total > page_size && (
               <Button
                 shape="round"
                 type="text"

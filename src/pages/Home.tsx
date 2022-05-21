@@ -1,18 +1,19 @@
-import { ProductApi } from 'apis/productApi';
-import ProductCard from 'components/Card/ProductCard';
-import MainLayout from 'components/Layout';
-import { useHistory } from 'react-router-dom';
-import { ProductTemplateQuery } from 'types';
 import { Button, Skeleton } from 'antd';
+
+import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { DownOutlined } from '@ant-design/icons';
 import LoginForm from 'components/Login/LoginForm';
+import LoginModal from 'components/Login/LoginModal';
+import MainLayout from 'components/Layout';
+import { ProductApi } from 'apis/productApi';
+import ProductCard from 'components/Card/ProductCard';
+import { ProductTemplateQuery } from 'types';
 import RegisterForm from 'components/Register/RegisterFrom';
+import SkeletionProductCard from 'components/Card/SkeletionProductCard';
+import updateQueryStringParameter from 'utils/updateQueryStringParameter';
+import { useHistory } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import useQueryParam from 'hooks/useQueryPrams';
-import updateQueryStringParameter from 'utils/updateQueryStringParameter';
-import { DEFAULT_PAGE_SIZE } from 'constants/app';
-import LoginModal from 'components/Login/LoginModal';
-import SkeletionProductCard from 'components/Card/SkeletionProductCard';
 
 const HomePage = (): JSX.Element => {
   const queryParam = useQueryParam();
@@ -67,7 +68,9 @@ const HomePage = (): JSX.Element => {
             </div>
             <div className="grid grid-cols-6 gap-4">
               {!monitorLoading &&
-                monitors?.data?.map((product) => <ProductCard key={product.productTemplateId} product={product} />)}
+                monitors?.data?.data?.map((product) => (
+                  <ProductCard key={product.productTemplateId} product={product} />
+                ))}
 
               {monitorLoading &&
                 Array(mpz === DEFAULT_PAGE_SIZE ? mpz : mpz - DEFAULT_PAGE_SIZE)
@@ -76,7 +79,7 @@ const HomePage = (): JSX.Element => {
             </div>
           </div>
           <div className="col-start-3 col-span-8 mt-6 pb-6 mb-6">
-            {!monitorLoading && monitors && monitors?.total > mpz && (
+            {!monitorLoading && monitors && monitors?.data?.total > mpz && (
               <Button
                 shape="round"
                 type="text"
@@ -109,7 +112,9 @@ const HomePage = (): JSX.Element => {
             </div>
             <div className="grid grid-cols-6 gap-4">
               {!smartPhoneLoading &&
-                smartPhones?.data?.map((product) => <ProductCard key={product.productTemplateId} product={product} />)}
+                smartPhones?.data?.data?.map((product) => (
+                  <ProductCard key={product.productTemplateId} product={product} />
+                ))}
               {smartPhoneLoading &&
                 Array(spz === DEFAULT_PAGE_SIZE ? spz : spz - DEFAULT_PAGE_SIZE)
                   .fill(1)
@@ -117,7 +122,7 @@ const HomePage = (): JSX.Element => {
             </div>
           </div>
           <div className="col-start-3 col-span-8 mt-6 pb-6 mb-6">
-            {smartPhones && smartPhones?.total > spz && (
+            {smartPhones && smartPhones?.data?.total > spz && (
               <Button
                 shape="round"
                 type="text"

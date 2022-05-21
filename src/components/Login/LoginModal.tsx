@@ -1,12 +1,18 @@
 import { Button, Form, Input, Modal, Select } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
+import { AuthApi } from 'apis/authApi';
+import { EyeOutlined } from '@ant-design/icons';
+import { ILoginVars } from '../../types';
+import notification from 'utils/notification';
+import { useUser } from 'context/userContext';
 
 const { Option } = Select;
 
 interface IProps {
   isModalVisible: boolean;
-  onCancel?: () => void;
-  handleUpdateUser?: (data: any) => void;
+  onCancel: () => void;
+
   onRegisterClick: () => void;
 }
 
@@ -16,14 +22,43 @@ const formLayout = {
 };
 
 export default function LoginModal(props: IProps): JSX.Element {
-  const { isModalVisible, onCancel, handleUpdateUser, onRegisterClick } = props;
-
+  const { isModalVisible, onCancel, onRegisterClick } = props;
+  const { setUser } = useUser();
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [form] = Form.useForm();
-
   useEffect(() => {
     form.resetFields();
   }, []);
 
+  const handleChangeUsername = (e: any) => {
+    e.preventDefault();
+    setUsername(e.target.value);
+  };
+  const handleChangPassword = (e: any) => {
+    e.preventDefault();
+    setPassword(e.target.value);
+  };
+  const onSubmitLogin = async (e: any) => {
+    if (!username || !password) return notification('error', 'Vui lòng nhập đủ thông tin đăng nhập');
+
+    const data: ILoginVars = {
+      username,
+      password,
+    };
+    AuthApi.login(data)
+      .then(({ data }) => {
+        const { token, user } = data;
+        localStorage.setItem('token', `Bearer ${token}`);
+        form.resetFields();
+        onCancel();
+        setUser(user);
+        notification('success', 'Đăng nhập thành công');
+      })
+      .catch((error: any) => {
+        notification('error', error.response?.data?.message[0]);
+      });
+  };
   return (
     <Modal
       visible={isModalVisible}
@@ -32,7 +67,7 @@ export default function LoginModal(props: IProps): JSX.Element {
       className="rounded-2xl"
       style={{ borderRadius: '20px' }}
     >
-      <div className="flex flex-col max-w-md p-6 rounded-md sm:p-10 dark:bg-coolGray-900 dark:text-coolGray-100">
+      <div className="flex flex-col m-auto max-w-md p-6 rounded-md sm:p-10 dark:bg-coolGray-900 dark:text-coolGray-100">
         <div className="mb-8 text-center">
           <h1 className="my-3 text-4xl font-bold">Đăng Nhập</h1>
           {/* <p className="text-sm dark:text-coolGray-400">Sign in to access your account</p> */}
@@ -41,7 +76,7 @@ export default function LoginModal(props: IProps): JSX.Element {
           form={form}
           name="role_based_auth"
           layout="horizontal"
-          onFinish={handleUpdateUser}
+          onFinish={onSubmitLogin}
           className="space-y-12 ng-untouched ng-pristine ng-valid"
           {...formLayout}
         >
@@ -83,6 +118,8 @@ export default function LoginModal(props: IProps): JSX.Element {
           <div className="space-y-4">
             <Form.Item name="username" label="Tên đăng nhập" htmlFor="username">
               <Input
+                value={username}
+                onChange={handleChangeUsername}
                 className="w-full px-3 border rounded-md dark:border-coolGray-700 dark:bg-coolGray-900 dark:text-coolGray-100"
                 id="username"
               />
@@ -90,15 +127,19 @@ export default function LoginModal(props: IProps): JSX.Element {
 
             <Form.Item name="password" label="Mật khẩu" htmlFor="pasword" className="my-4">
               <Input
+                value={password}
+                onChange={handleChangPassword}
+                type={'password'}
                 className="w-full px-3 border rounded-md dark:border-coolGray-700 dark:bg-coolGray-900 dark:text-coolGray-100"
                 id="password"
               />
             </Form.Item>
+
             <Form.Item className="flex justify-center mt-4">
               <div>
                 <button
                   type="submit"
-                  className="w-full mt-4 mb-2 px-8 py-3 rounded-md dark:bg-violet-400 dark:text-coolGray-900"
+                  className="w-full mt-4 mb-2 px-2 py-2 rounded-md dark:bg-violet-400 dark:text-coolGray-900 border-2 border-black hover:bg-black hover:text-white transition-all duration-200"
                 >
                   Đăng nhập
                 </button>

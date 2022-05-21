@@ -1,11 +1,12 @@
+import { ProductResponse, ProductTemplateDetailResponse, ProductTemplateResponse } from 'types';
+import { useEffect, useState } from 'react';
+
 import { Button } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
+import MainLayout from 'components/Layout';
 import { ProductApi } from 'apis/productApi';
 import ProductCard from 'components/Card/ProductCard';
-import MainLayout from 'components/Layout';
-import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { ProductResponse, ProductTemplateDetailResponse, ProductTemplateResponse } from 'types';
-import { DownOutlined } from '@ant-design/icons';
 import { useQuery } from 'react-query';
 
 export default function ProductDetailPage() {
@@ -24,20 +25,20 @@ export default function ProductDetailPage() {
   //   });
   // }, [productId]);
   useEffect(() => {
-    ProductApi.getProducts({ page: 3 }).then(({ data }) => setProducts(data));
+    ProductApi.getProducts({ page: 3 }).then(({ data }) => setProducts(data.data));
   }, []);
 
   const { data: product } = useQuery(['product'], () => ProductApi.getProduct(productId), {
     onSuccess: (data) => {
-      document.title = data.productName;
+      document.title = data.data.productName;
     },
   });
 
   useEffect(() => {
     if (!product) return;
-    setThumbnail(product.thumbnail);
-    setProductName(product.productName);
-    setPrice(product.price);
+    setThumbnail(product.data.thumbnail);
+    setProductName(product.data.productName);
+    setPrice(product.data.price);
   }, [product]);
 
   const handleItemClick = (value: ProductResponse) => {
@@ -70,7 +71,7 @@ export default function ProductDetailPage() {
                   <h6 className="font-bold leading-tight">Các lựa chọn khác</h6>
                 </div>
 
-                {product?.products?.map((elmelemt) => {
+                {product?.data?.products?.map((elmelemt) => {
                   return (
                     <div
                       key={elmelemt.productId}
