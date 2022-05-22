@@ -17,6 +17,7 @@ import React from 'react';
 import RegisterModal from 'components/Register/RegisterModal';
 import notification from 'utils/notification';
 import sidebarMenu from 'constants/menu';
+import { useUser } from 'context/userContext';
 
 type IProps = {
   children: ReactNode;
@@ -35,6 +36,7 @@ export default function MainLayout(props: IProps) {
   const [registerVisible, setRegisterVisible] = useState<boolean>(false);
   const { children, isLoading = false, isError, error } = props;
   const onSearch = (value: string) => console.log(value);
+  const { user } = useUser();
   const history = useHistory();
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -76,7 +78,7 @@ export default function MainLayout(props: IProps) {
     <Spin size="large" spinning={isLoading}>
       <Layout className="min-h-screen">
         {/* <SideBar /> */}
-        <Header className="bg-white h-12 flex items-center justify-between fixed z-10 w-full border-b-1 shadow-2xl ">
+        <Header className="bg-white flex items-center justify-between fixed z-10 w-full border-b-1 shadow-2xl py-5">
           {/* <img src={logo} alt="logo" className="cursor-pointer" /> */}
           <div className="flex flex-row h-full items-center gap-x-3">
             {/* <Link to="/"> */}
@@ -149,10 +151,19 @@ export default function MainLayout(props: IProps) {
             <SearchOutlined className="text-black mr-4" />
             <QuestionCircleOutlined className="text-black mr-4" />
             <BellOutlined className="text-black mr-4" />
-            <Button type="text" onClick={() => setLoginVisible(true)}>
-              Đăng nhập
-            </Button>
-            <Button onClick={() => setRegisterVisible(true)}>Đăng kí</Button>
+            {user ? (
+              <div className="w-40 flex justify-between truncate ...">
+                <p>{user.fullname}</p>
+                <img className="w-8" src={`${user.imgURL ?? `https://joeschmoe.io/api/v1/${user.fullname}`}`}></img>
+              </div>
+            ) : (
+              <div>
+                <Button type="text" onClick={() => setLoginVisible(true)}>
+                  Đăng nhập
+                </Button>
+                <Button onClick={() => setRegisterVisible(true)}>Đăng kí</Button>
+              </div>
+            )}
             {/* <Dropdown
               overlay={
                 <Menu className="p-2">

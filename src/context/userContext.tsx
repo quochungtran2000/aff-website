@@ -22,7 +22,7 @@ const UserProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     const token = localStorage.getItem('token');
     if (!token) return undefined;
 
-    const decode: User = jwtDecode(token.replace('Bearer ', ''));
+    const decode: User = jwtDecode(token);
     return decode;
   });
   const handleRemoveToken = () => {

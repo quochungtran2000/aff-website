@@ -1,4 +1,4 @@
-import { ILoginResponse, ILoginVars, User } from 'types';
+import { IGetUserResponse, ILoginResponse, ILoginVars, User, UserInput } from 'types';
 import axios, { AxiosPromise, AxiosResponse } from 'axios';
 
 import { authPath } from '../constants/apiPaths';
@@ -12,5 +12,9 @@ export const AuthApi = {
   me: (): Promise<AxiosResponse<User>> => {
     const url = `/${authPath}/profile`;
     return axiosClient.get(url);
+  },
+  register: (data: UserInput): Promise<AxiosResponse<User>> => {
+    const url = `/${authPath}/register`;
+    return axiosClient.post(url, data);
   },
 };

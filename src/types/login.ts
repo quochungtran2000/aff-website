@@ -9,3 +9,7 @@ export type ILoginResponse = {
   token: string;
   user: User;
 };
+
+export type IGetUserResponse = {
+  user: User;
+};

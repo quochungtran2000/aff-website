@@ -40,8 +40,6 @@ export default function LoginModal(props: IProps): JSX.Element {
     setPassword(e.target.value);
   };
   const onSubmitLogin = async (e: any) => {
-    if (!username || !password) return notification('error', 'Vui lòng nhập đủ thông tin đăng nhập');
-
     const data: ILoginVars = {
       username,
       password,
@@ -49,7 +47,7 @@ export default function LoginModal(props: IProps): JSX.Element {
     AuthApi.login(data)
       .then(({ data }) => {
         const { token, user } = data;
-        localStorage.setItem('token', `Bearer ${token}`);
+        localStorage.setItem('token', token);
         form.resetFields();
         onCancel();
         setUser(user);
@@ -118,6 +116,7 @@ export default function LoginModal(props: IProps): JSX.Element {
           <div className="space-y-4">
             <Form.Item name="username" label="Tên đăng nhập" htmlFor="username">
               <Input
+                required
                 value={username}
                 onChange={handleChangeUsername}
                 className="w-full px-3 border rounded-md dark:border-coolGray-700 dark:bg-coolGray-900 dark:text-coolGray-100"
@@ -127,6 +126,7 @@ export default function LoginModal(props: IProps): JSX.Element {
 
             <Form.Item name="password" label="Mật khẩu" htmlFor="pasword" className="my-4">
               <Input
+                required
                 value={password}
                 onChange={handleChangPassword}
                 type={'password'}
