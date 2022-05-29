@@ -42,8 +42,8 @@ export default function ProductDetailPage() {
 
   const handleItemClick = (value: ProductResponse) => {
     setThumbnail(value.thumbnail);
-    setProductName(value.productName);
-    setPrice(value.salePrice);
+    setProductName(value.name);
+    setPrice(0);
   };
 
   return (
@@ -77,16 +77,17 @@ export default function ProductDetailPage() {
                       className="flex flex-row  gap-3 align-center justify-between"
                       onClick={() => handleItemClick(elmelemt)}
                     >
+                      <div className="space-y-2 pb-4">
+                        <img className="rounded-t-lg w-full" src={elmelemt.thumbnail} alt="product image" />
+                      </div>
                       <div className="flex flex-col py-4 max-w-xs min-w-xs">
-                        <div className="text-xs font-semibold tracking-tight text-gray-900 pb-2">
-                          {elmelemt.productName}
-                        </div>
-                        <div className="text-xs font-light tracking-tight">{`${
+                        <div className="text-xs font-semibold tracking-tight text-gray-900 pb-2">{elmelemt.name}</div>
+                        {/* <div className="text-xs font-light tracking-tight">{`${
                           elmelemt.salePrice?.toLocaleString('de-De') || 0
-                        } ₫`}</div>
+                        } ₫`}</div> */}
                       </div>
                       <div className="py-4">
-                        <a href={elmelemt.productUrl} target="_blank" rel="noreferrer">
+                        <a href={elmelemt.originalUrl} target="_blank" rel="noreferrer">
                           <Button>Visit</Button>
                         </a>
                       </div>

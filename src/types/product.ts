@@ -1,16 +1,16 @@
 export type ProductResponse = {
   productId: string;
-  productName: string;
-  productUrl: string;
+  name: string;
+  originalUrl: string;
   thumbnail: string;
-  isSale: boolean;
-  salePrice: number;
-  discountPercent: number;
   average: number;
   sold: number;
   description: string;
   merchant: string;
   slug: string;
+  createdAt: Date;
+  updatedAt: Date;
+  lastestCrawlAt: Date;
 };
 
 export type ProductTemplateResponse = {
