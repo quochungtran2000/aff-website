@@ -8,10 +8,12 @@ import { useRouteMatch } from 'react-router-dom';
  */
 export const UpdateDocumentTitle = (): JSX.Element => {
   for (const elm of titles) {
+    if (!elm) break;
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const match = useRouteMatch(elm.path);
     if (match?.isExact) {
       if (elm.param) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         document.title = elm.setTitle((match.params as any)[elm.param]);
       } else {
         document.title = elm.setTitle();

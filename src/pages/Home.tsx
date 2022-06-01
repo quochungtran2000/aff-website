@@ -1,155 +1,112 @@
+import { Button, Skeleton } from 'antd';
+import { DEFAULT_PAGE_SIZE } from 'constants/app';
+import MainLayout from 'components/Layout';
 import { ProductApi } from 'apis/productApi';
 import ProductCard from 'components/Card/ProductCard';
-import MainLayout from 'components/Layout';
-import { useHistory } from 'react-router-dom';
-import { ProductTemplateQuery } from 'types';
-import { Button, Skeleton } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
-import LoginForm from 'components/Login/LoginForm';
-import RegisterForm from 'components/Register/RegisterFrom';
-import { useQuery } from 'react-query';
-import useQueryParam from 'hooks/useQueryPrams';
-import updateQueryStringParameter from 'utils/updateQueryStringParameter';
-import { DEFAULT_PAGE_SIZE } from 'constants/app';
-import LoginModal from 'components/Login/LoginModal';
 import SkeletionProductCard from 'components/Card/SkeletionProductCard';
+import { useUser } from 'context/userContext';
+import { Category } from 'types/category';
+import { useCallback, useEffect, useState } from 'react';
+import { ProductTemplateResponse } from 'types';
+import { useHistory } from 'react-router-dom';
 
-const HomePage = (): JSX.Element => {
-  const queryParam = useQueryParam();
-  const page = 1;
-  const spz = Number(queryParam.get('spz')) || DEFAULT_PAGE_SIZE;
-  const mpz = Number(queryParam.get('mpz') + '') || DEFAULT_PAGE_SIZE;
+const bannerUrl =
+  'https://thumbs.dreamstime.com/z/airport-security-police-department-screening-traveler-metal-detectors-millimeter-wave-scanner-protection-passenger-143607189.jpg';
 
+type IProps = {
+  category: Category;
+  index: number;
+};
+const RenderSession = (props: IProps) => {
+  const { category, index } = props;
+  const [loading, setLoading] = useState<boolean>(false);
+  const [products, setPRoducts] = useState<ProductTemplateResponse[]>([]);
   const history = useHistory();
 
-  const monitorParams: ProductTemplateQuery = { page, page_size: mpz, search: 'Màn hình' };
-  const smartPhoneParams: ProductTemplateQuery = { page, page_size: spz, search: 'Điện thoại' };
+  const refetch = useCallback(async () => {
+    setLoading(true);
+    try {
+      const {
+        data: { data },
+      } = await ProductApi.getProducts({ categoryId: category.categoryId });
+      setPRoducts(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const monitorParam = JSON.parse(JSON.stringify(monitorParams));
-  const smartPhoneParam = JSON.parse(JSON.stringify(smartPhoneParams));
+  useEffect(() => {
+    if (!category) return;
+    refetch();
+  }, [category, refetch]);
 
-  const { data: smartPhones, isLoading: smartPhoneLoading } = useQuery(['smartphones', smartPhoneParams], () =>
-    ProductApi.getProducts(smartPhoneParam)
+  return (
+    <section className={`bg-${index % 2 === 0 ? 'white' : 'gray-100'} w-full`} key={index}>
+      <div className="grid grid-cols-12 gap-4 py-6">
+        <div className="col-start-3 col-span-8 bg-dark">
+          <div className="flex justify-between">
+            <div className="space-y-2 pb-4">
+              {!loading && <h5 className="font-bold leading-tight">{category.title}</h5>}
+              {loading && <Skeleton.Input active />}
+            </div>
+            <div className="space-y-2 pb-4">
+              {!loading && (
+                <Button
+                  type="text"
+                  className="leading-tight"
+                  onClick={() => history.push(`/product?categoryId=${category.categoryId}`)}
+                >
+                  Xem Thêm
+                </Button>
+              )}
+              {loading && <Skeleton.Input active />}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-6 gap-4">
+            {!loading && products?.map((product) => <ProductCard key={product.productTemplateId} product={product} />)}
+
+            {loading &&
+              Array(DEFAULT_PAGE_SIZE)
+                .fill(1)
+                .map(() => <SkeletionProductCard key={Math.random() * 100000000} />)}
+          </div>
+        </div>
+      </div>
+    </section>
   );
+};
 
-  const { data: monitors, isLoading: monitorLoading } = useQuery(['monitors', monitorParams], () =>
-    ProductApi.getProducts(monitorParam)
-  );
+const HomePage = (): JSX.Element => {
+  const { category } = useUser();
 
   return (
     <MainLayout>
       <section className="dark:bg-coolGray-800 dark:text-coolGray-100">
-        <div className="container mx-auto flex flex-col items-center px-4 py-16 text-center md:py-32 md:px-10 lg:px-32 xl:max-w-3xl">
-          <h1 className="text-4xl font-bold leading-none sm:text-5xl">
+        <div className="container mx-auto flex flex-col items-center px-4 py-20 text-center md:py-40 md:px-10 lg:px-32 relative">
+          <h1 className="text-4xl font-bold leading-none sm:text-5xl z-20 text-rose-600 opacity-0">
             SSG
             {/* <span className="dark:text-violet-400">laborum doloribus</span>delectus */}
           </h1>
-          <p className="px-8 mt-8 mb-12 text-lg">
+          <p className="px-16 mt-8 mb-12 text-lg z-20 text-rose-600 opacity-0">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit officia aliquid dolores perferendis
             debitis ea?
           </p>
-          {/* <div className="flex flex-wrap justify-center">
-            <button className="px-8 py-3 m-2 text-lg font-semibold rounded dark:bg-violet-400 dark:text-coolGray-900">
-              Get started
-            </button>
-            <button className="px-8 py-3 m-2 text-lg border rounded dark:text-coolGray-50 dark:border-coolGray-700">
-              Learn more
-            </button>
-          </div> */}
+          <div
+            className="absolute bottom-0 left-0 top-0 right-0 z-0"
+            style={{
+              backgroundImage: `url(${bannerUrl})`,
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: 'fill',
+              backgroundPosition: 'center center',
+            }}
+          ></div>
         </div>
       </section>
-      <section className="bg-white w-full">
-        <div className="grid grid-cols-12 gap-4 py-6">
-          <div className="col-start-3 col-span-8 bg-dark">
-            <div className="space-y-2 pb-4">
-              {!monitorLoading && <h5 className="font-bold leading-tight">Màn hình Máy tính</h5>}
-              {monitorLoading && <Skeleton.Input active />}
-            </div>
-            <div className="grid grid-cols-6 gap-4">
-              {!monitorLoading &&
-                monitors?.data?.map((product) => <ProductCard key={product.productTemplateId} product={product} />)}
-
-              {monitorLoading &&
-                Array(mpz === DEFAULT_PAGE_SIZE ? mpz : mpz - DEFAULT_PAGE_SIZE)
-                  .fill(1)
-                  .map((i) => <SkeletionProductCard key={i} />)}
-            </div>
-          </div>
-          <div className="col-start-3 col-span-8 mt-6 pb-6 mb-6">
-            {!monitorLoading && monitors && monitors?.total > mpz && (
-              <Button
-                shape="round"
-                type="text"
-                onClick={() =>
-                  history.push({
-                    pathname: location.pathname,
-                    search: updateQueryStringParameter(location.search, {
-                      mpz: mpz + DEFAULT_PAGE_SIZE,
-                    }),
-                  })
-                }
-                className="w-full"
-                icon={<DownOutlined />}
-              >
-                Xem thêm
-              </Button>
-            )}
-
-            <br />
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-gray-100 w-full">
-        <div className="grid grid-cols-12 gap-4 py-6">
-          <div className="col-start-3 col-span-8 bg-dark">
-            <div className="space-y-2 pb-4">
-              {!smartPhoneLoading && <h5 className="font-bold leading-tight">Điện thoại di động</h5>}
-              {smartPhoneLoading && <Skeleton.Input active />}
-            </div>
-            <div className="grid grid-cols-6 gap-4">
-              {!smartPhoneLoading &&
-                smartPhones?.data?.map((product) => <ProductCard key={product.productTemplateId} product={product} />)}
-              {smartPhoneLoading &&
-                Array(spz === DEFAULT_PAGE_SIZE ? spz : spz - DEFAULT_PAGE_SIZE)
-                  .fill(1)
-                  .map((i) => <SkeletionProductCard key={i} />)}
-            </div>
-          </div>
-          <div className="col-start-3 col-span-8 mt-6 pb-6 mb-6">
-            {smartPhones && smartPhones?.total > spz && (
-              <Button
-                shape="round"
-                type="text"
-                onClick={() =>
-                  history.push({
-                    pathname: location.pathname,
-                    search: updateQueryStringParameter(location.search, {
-                      spz: spz + DEFAULT_PAGE_SIZE,
-                    }),
-                  })
-                }
-                className="w-full hover:bg-white"
-                icon={<DownOutlined />}
-              >
-                Xem thêm
-              </Button>
-            )}
-            <br />
-          </div>
-        </div>
-      </section>
-
-      {/* <section className="bg-white w-full">
-        <div className="grid grid-cols-12 gap-4 py-6">
-          <div className="col-start-3 col-span-4 bg-dark">
-            <LoginForm />
-          </div>
-          <div className="col-start-8 col-span-4 bg-dark">
-            <RegisterForm />
-          </div>
-        </div>
-      </section> */}
+      {category.length && category?.map((cate, index) => RenderSession({ category: cate, index }))}
     </MainLayout>
   );
 };

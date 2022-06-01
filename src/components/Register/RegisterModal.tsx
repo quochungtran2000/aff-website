@@ -1,11 +1,13 @@
 import { Button, Form, Input, Modal, Select } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-const { Option } = Select;
+import { AuthApi } from 'apis/authApi';
+import { UserInput } from 'types';
+import notification from 'utils/notification';
 
 interface IProps {
   isModalVisible: boolean;
-  onCancel?: () => void;
+  onCancel: () => void;
   handleUpdateUser?: (data: any) => void;
   onLoginClick: () => void;
 }
@@ -17,12 +19,68 @@ const formLayout = {
 
 export default function RegisterModal(props: IProps): JSX.Element {
   const { isModalVisible, onCancel, handleUpdateUser, onLoginClick } = props;
+  const [username, setUserName] = useState<string>('');
+  const [fullname, setFullName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const handleChangeUserName = (e: any) => {
+    e.preventDefault();
+    setUserName(e.target.value);
+  };
+  const handleChangeFullName = (e: any) => {
+    e.preventDefault();
+    setFullName(e.target.value);
+  };
+  const handleChangeEmail = (e: any) => {
+    e.preventDefault();
+    setEmail(e.target.value);
+  };
+  const handleChangePassword = (e: any) => {
+    e.preventDefault();
+    setPassword(e.target.value);
+  };
+  const handleChangeConfirmPassword = (e: any) => {
+    e.preventDefault();
+    setConfirmPassword(e.target.value);
+  };
+  const handleChangePhoneNumber = (e: any) => {
+    e.preventDefault();
+    setPhoneNumber(e.target.value);
+  };
+
+  const submitResigner = async (e: any) => {
+    console.log(1);
+    if (password !== confirmPassword) {
+      return notification('error', 'Mật khẩu không khớp');
+    }
+    const data: UserInput = {
+      fullname,
+      email,
+      phoneNumber,
+      username,
+      password,
+    };
+    console.log(data);
+    AuthApi.register(data)
+      .then(({ data }) => {
+        form.resetFields();
+        onCancel();
+        notification('success', 'Đăng kí thành công');
+        onLoginClick();
+      })
+      .then((error: any) => {
+        console.log(error.response.data);
+        notification('error', error.response?.data?.message[0]);
+      });
+  };
 
   const [form] = Form.useForm();
 
   useEffect(() => {
     form.resetFields();
-  }, []);
+  }, [form]);
 
   return (
     <Modal
@@ -40,8 +98,7 @@ export default function RegisterModal(props: IProps): JSX.Element {
         <Form
           form={form}
           name="role_based_auth"
-          layout="horizontal"
-          onFinish={handleUpdateUser}
+          onFinish={submitResigner}
           className="space-y-12 ng-untouched ng-pristine ng-valid"
           {...formLayout}
         >
@@ -51,6 +108,8 @@ export default function RegisterModal(props: IProps): JSX.Element {
                 Họ và tên
               </label>
               <input
+                required
+                onChange={handleChangeFullName}
                 type="text"
                 name="fullName"
                 id="fullName"
@@ -63,6 +122,8 @@ export default function RegisterModal(props: IProps): JSX.Element {
                 Tên đăng nhập
               </label>
               <input
+                required
+                onChange={handleChangeUserName}
                 type="text"
                 name="username"
                 id="username"
@@ -76,6 +137,8 @@ export default function RegisterModal(props: IProps): JSX.Element {
                 Email
               </label>
               <input
+                required
+                onChange={handleChangeEmail}
                 type="email"
                 name="email"
                 id="email"
@@ -89,6 +152,8 @@ export default function RegisterModal(props: IProps): JSX.Element {
                 Số điện thoại
               </label>
               <input
+                required
+                onChange={handleChangePhoneNumber}
                 type="text"
                 name="phoneNumber"
                 id="phoneNumber"
@@ -103,6 +168,8 @@ export default function RegisterModal(props: IProps): JSX.Element {
                 </label>
               </div>
               <input
+                required
+                onChange={handleChangePassword}
                 type="password"
                 name="password"
                 id="password"
@@ -118,6 +185,8 @@ export default function RegisterModal(props: IProps): JSX.Element {
                 </label>
               </div>
               <input
+                onChange={handleChangeConfirmPassword}
+                required
                 type="password"
                 name="confirmPassword"
                 id="confirmPassword"
@@ -128,7 +197,10 @@ export default function RegisterModal(props: IProps): JSX.Element {
           </div>
           <div className="space-y-2">
             <div>
-              <button type="button" className="w-full px-8 py-3 rounded-md dark:bg-violet-400 dark:text-coolGray-900">
+              <button
+                type="submit"
+                className="w-full border-2 border-orange-900 hover:bg-orange-900 hover:text-white transition-all duration-500 px-8 py-3 rounded-md dark:bg-violet-400 dark:text-coolGray-900"
+              >
                 Đăng Ký
               </button>
             </div>
@@ -137,7 +209,7 @@ export default function RegisterModal(props: IProps): JSX.Element {
               <a
                 rel="noopener noreferrer"
                 href="/"
-                className="hover:underline dark:text-violet-400"
+                className="hover:underline text-blue-600 dark:text-violet-400"
                 onClick={(e) => {
                   e.preventDefault();
                   onLoginClick();
