@@ -1,12 +1,8 @@
 import { Skeleton } from 'antd';
-import React from 'react';
-type IProps = {
-  key: string | number;
-};
 
-export default function SkeletionProductCard(props: IProps) {
+export default function SkeletionProductCard() {
   return (
-    <div key={props.key} className="max-w-sm bg-white rounded-lg shadow-md ">
+    <div className="max-w-sm bg-white rounded-lg shadow-md ">
       {/* <div className="max-w-sm bg-white rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700"></div> */}
       <span>
         <Skeleton active className="p-2 rounded-t-lg max-w-full" style={{ width: '100%', height: '120px' }}></Skeleton>

@@ -1,4 +1,9 @@
-export type IRole = 'user';
+// export type IRole = {
+//   description: string;
+//   roleId: number;
+//   roleName: string;
+//   slug: string;
+// };
 
 export interface UserInput {
   username: string;
@@ -9,6 +14,6 @@ export interface UserInput {
 }
 export interface User extends UserInput {
   userId: string;
-  role: IRole;
+  role: string;
   imgURL?: string;
 }

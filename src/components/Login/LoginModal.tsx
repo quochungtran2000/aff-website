@@ -1,11 +1,12 @@
 import { Button, Form, Input, Modal, Select } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { AuthApi } from 'apis/authApi';
 import { EyeOutlined } from '@ant-design/icons';
 import { ILoginVars } from '../../types';
 import notification from 'utils/notification';
 import { useUser } from 'context/userContext';
+import { useForm } from 'antd/lib/form/Form';
 
 const { Option } = Select;
 
@@ -26,10 +27,13 @@ export default function LoginModal(props: IProps): JSX.Element {
   const { setUser } = useUser();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [form] = Form.useForm();
+  const [form] = useForm();
+  const formRef = useRef(null);
+
   useEffect(() => {
-    form.resetFields();
-  }, []);
+    if (formRef.current) form.resetFields();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form]);
 
   const handleChangeUsername = (e: any) => {
     e.preventDefault();
@@ -76,6 +80,7 @@ export default function LoginModal(props: IProps): JSX.Element {
           layout="horizontal"
           onFinish={onSubmitLogin}
           className="space-y-12 ng-untouched ng-pristine ng-valid"
+          ref={formRef}
           {...formLayout}
         >
           {/* <Form.Item label="Mã nhân viên" name="id">

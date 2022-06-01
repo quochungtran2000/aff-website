@@ -36,7 +36,6 @@ export default function MainLayout(props: IProps) {
   const [registerVisible, setRegisterVisible] = useState<boolean>(false);
   const { children, isLoading = false, isError, error } = props;
   const onSearch = (value: string) => console.log(value);
-  const { user } = useUser();
   const history = useHistory();
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -44,6 +43,8 @@ export default function MainLayout(props: IProps) {
   const openItem = sidebarMenu.find((m) => {
     return m.submenu ? m.submenu.some((s) => s.key === location.pathname) : m.key === location.pathname;
   });
+
+  const { user, signOut } = useUser();
   const openKey = openItem ? openItem.key : '/';
 
   const [search, setSearch] = useState<string>('');
@@ -74,11 +75,19 @@ export default function MainLayout(props: IProps) {
   };
   // const history = useHistory();
 
+  const userMenu = [
+    { title: 'Thông tin cá nhân', onClick: () => history.push('/profile') },
+    { title: 'Đăng bài', onClick: () => history.push('/create-post') },
+    { title: 'Bài viết đã lưu', onClick: () => history.push('/my-save-post') },
+    { title: 'Sản phẩm đã lưu', onClick: () => history.push('/my-save-product') },
+    { title: 'Đăng xuất', onClick: signOut },
+  ];
+
   return (
     <Spin size="large" spinning={isLoading}>
       <Layout className="min-h-screen">
         {/* <SideBar /> */}
-        <Header className="bg-white flex items-center justify-between fixed z-10 w-full border-b-1 shadow-2xl py-5">
+        <Header className="bg-white flex items-center justify-between fixed z-10 w-full border-b-1 shadow-2xl py-5 z-50">
           {/* <img src={logo} alt="logo" className="cursor-pointer" /> */}
           <div className="flex flex-row h-full items-center gap-x-3">
             {/* <Link to="/"> */}
@@ -151,12 +160,37 @@ export default function MainLayout(props: IProps) {
             <SearchOutlined className="text-black mr-4" />
             <QuestionCircleOutlined className="text-black mr-4" />
             <BellOutlined className="text-black mr-4" />
-            {user ? (
-              <div className="w-40 flex justify-between truncate ...">
-                <p>{user.fullname}</p>
-                <img className="w-8" src={`${user.imgURL ?? `https://joeschmoe.io/api/v1/${user.fullname}`}`}></img>
-              </div>
-            ) : (
+            {user && (
+              <Dropdown
+                overlay={
+                  <Menu className="">
+                    {userMenu.map((item, index) => (
+                      <Menu.Item key={item.title} onClick={item.onClick}>
+                        {item.title}
+                      </Menu.Item>
+                    ))}
+                  </Menu>
+
+                  //   <>
+                  //     <Menu className="">
+                  //       <Menu.Item onClick={() => history.push('/profile')}>Profile</Menu.Item>
+                  //     </Menu>
+                  //     <Menu className="">
+                  //       <Menu.Item onClick={signOut}>Sign out</Menu.Item>
+                  //     </Menu>
+                  //   </>
+                }
+                placement="bottomRight"
+              >
+                <div className="flex items-center cursor-default">
+                  <div className="w-8 h-8 rounded-full flex justify-center items-center overflow-hidden mr-2">
+                    <img src={user?.imgURL || `https://joeschmoe.io/api/v1/${user?.fullname}`} alt="avatar" />
+                  </div>
+                  <div className="para-3 text-black">{user.fullname}</div>
+                </div>
+              </Dropdown>
+            )}
+            {!user && (
               <div>
                 <Button type="text" onClick={() => setLoginVisible(true)}>
                   Đăng nhập
@@ -164,21 +198,6 @@ export default function MainLayout(props: IProps) {
                 <Button onClick={() => setRegisterVisible(true)}>Đăng kí</Button>
               </div>
             )}
-            {/* <Dropdown
-              overlay={
-                <Menu className="p-2">
-                  <Menu.Item>Sign out</Menu.Item>
-                </Menu>
-              }
-              placement="bottomRight"
-            >
-              <div className="flex items-center cursor-default">
-                <div className="w-8 h-8 rounded-full flex justify-center items-center overflow-hidden mr-2">
-                  <img src={avatar} alt="avatar" />
-                </div>
-                <div className="para-3 text-white">Hung</div>
-              </div>
-            </Dropdown> */}
           </div>
         </Header>
         {/* <Sider

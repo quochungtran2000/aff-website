@@ -1,4 +1,9 @@
+import { useUser } from 'context/userContext';
+import { useHistory } from 'react-router-dom';
+
 export default function CustomFooter() {
+  const { category } = useUser();
+  const history = useHistory();
   return (
     <footer className="text-gray-600 body-font">
       <div className="container px-5 py-24 mx-auto">
@@ -6,18 +11,11 @@ export default function CustomFooter() {
           <div className="lg:w-1/4 md:w-1/2 w-full px-4">
             <h2 className="title-font font-medium text-gray-900 tracking-widest text-sm mb-3">CATEGORIES</h2>
             <nav className="list-none mb-10">
-              <li>
-                <a className="text-gray-600 hover:text-gray-800">First Link</a>
-              </li>
-              <li>
-                <a className="text-gray-600 hover:text-gray-800">Second Link</a>
-              </li>
-              <li>
-                <a className="text-gray-600 hover:text-gray-800">Third Link</a>
-              </li>
-              <li>
-                <a className="text-gray-600 hover:text-gray-800">Fourth Link</a>
-              </li>
+              {category?.map((item, index) => (
+                <li onClick={() => history.push(`/product?categoryId=${item.categoryId}`)} key={index}>
+                  <a className="text-gray-600 hover:text-gray-800">{item.title}</a>
+                </li>
+              ))}
             </nav>
           </div>
           <div className="lg:w-1/4 md:w-1/2 w-full px-4">

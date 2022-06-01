@@ -52,7 +52,7 @@ export default function ProductPage() {
               {loading &&
                 Array(page_size === DEFAULT_PAGE_SIZE ? page_size : page_size - DEFAULT_PAGE_SIZE)
                   .fill(1)
-                  .map((i) => <SkeletionProductCard key={i} />)}
+                  .map((i) => <SkeletionProductCard key={Math.random() * 1000000} />)}
             </div>
           </div>
           {/* <div className="col-start-3 col-span-8 mt-6 pb-6 mb-6">

@@ -1,16 +1,19 @@
+import { Button } from 'antd';
 import { ProductTemplateResponse } from 'types';
+import { useHistory } from 'react-router-dom';
 
 type IProps = {
   product: ProductTemplateResponse;
 };
 
 export default function ProductCard({ product }: IProps) {
-  const { price, productName, thumbnail, productTemplateId, slug } = product;
+  const { productName, thumbnail, productTemplateId, slug } = product;
   const productSlug = `${slug}-p${productTemplateId}.html`;
+  const history = useHistory();
   return (
-    <div className="max-w-sm bg-white rounded-lg shadow-md ">
+    <div className="max-w-sm bg-white rounded-lg shadow-md flex flex-col">
       {/* <div className="max-w-sm bg-white rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700"></div> */}
-      <a href={`/product/${productSlug}`} target="_blank" rel="noreferrer">
+      <a href={`/product/${productSlug}`} target="_blank" rel="noreferrer" className="flex-1">
         <img className="p-2 rounded-t-lg" src={thumbnail} alt="product image" />
       </a>
       <div className="px-2 pb-2">
@@ -23,7 +26,7 @@ export default function ProductCard({ product }: IProps) {
             {productName?.split('-')[0]}
           </h5>
         </a>
-        <div className="font-normal text-rose-500 text-xs mt-1.5">{`${price?.toLocaleString('de-De') || 0} ₫`}</div>
+        {/* <div className="font-normal text-rose-500 text-xs mt-1.5">{`${price?.toLocaleString('de-De') || 0} ₫`}</div>
         <div className="flex items-center mt-1 mb-1">
           <svg
             className="w-3 h-3 text-yellow-300"
@@ -68,10 +71,20 @@ export default function ProductCard({ product }: IProps) {
           <span className="bg-blue-100 text-blue-800 text-xs font-semibold mr-1 px-1.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-1">
             5.0
           </span>
-          {/* <span className="text-xs font-light">{`Đã bán ${sold}`}</span> */}
-          {/* <span className="text-xs font-light">{`Đã bán ${sold}`}</span> */}
-        </div>
+          <span className="text-xs font-light">{`Đã bán ${sold}`}</span>
+          <span className="text-xs font-light">{`Đã bán ${sold}`}</span> 
+        </div>*/}
         {/* <div className="font-normal  text-xs mt-1.5">{`Nơi bán: ${merchant}`}</div> */}
+      </div>
+      <div className="py-2 mx-auto">
+        <Button
+          type="text"
+          shape="round"
+          className="text-black"
+          onClick={() => history.push(`/product/${productSlug}`)}
+        >
+          So Sánh
+        </Button>
       </div>
     </div>
   );

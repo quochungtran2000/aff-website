@@ -80,7 +80,7 @@ export default function RegisterModal(props: IProps): JSX.Element {
 
   useEffect(() => {
     form.resetFields();
-  }, []);
+  }, [form]);
 
   return (
     <Modal
