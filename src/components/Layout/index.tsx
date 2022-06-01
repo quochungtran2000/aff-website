@@ -1,7 +1,3 @@
-import { ReactNode, useState } from 'react';
-import { Dropdown, Layout, Menu, Spin, Input, Button } from 'antd';
-import MenuItem from 'antd/lib/menu/MenuItem';
-import CustomerFooter from './Footer';
 import {
   BellOutlined,
   MenuFoldOutlined,
@@ -9,12 +5,19 @@ import {
   QuestionCircleOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { logo, avatar } from 'assets/images';
-import sidebarMenu from 'constants/menu';
+import { Button, Dropdown, Input, Layout, Menu, Spin } from 'antd';
 import { Link, Redirect, useHistory } from 'react-router-dom';
-import React from 'react';
+import { ReactNode, useState } from 'react';
+import { avatar, logo } from 'assets/images';
+
+import CustomerFooter from './Footer';
 import LoginModal from 'components/Login/LoginModal';
+import MenuItem from 'antd/lib/menu/MenuItem';
+import React from 'react';
 import RegisterModal from 'components/Register/RegisterModal';
+import notification from 'utils/notification';
+import sidebarMenu from 'constants/menu';
+import { useUser } from 'context/userContext';
 
 type IProps = {
   children: ReactNode;
@@ -40,6 +43,8 @@ export default function MainLayout(props: IProps) {
   const openItem = sidebarMenu.find((m) => {
     return m.submenu ? m.submenu.some((s) => s.key === location.pathname) : m.key === location.pathname;
   });
+
+  const { user, signOut } = useUser();
   const openKey = openItem ? openItem.key : '/';
 
   const [search, setSearch] = useState<string>('');
@@ -70,15 +75,25 @@ export default function MainLayout(props: IProps) {
   };
   // const history = useHistory();
 
+  const userMenu = [
+    { title: 'Thông tin cá nhân', onClick: () => history.push('/profile') },
+    { title: 'Đăng bài', onClick: () => history.push('/create-post') },
+    { title: 'Bài viết đã lưu', onClick: () => history.push('/my-save-post') },
+    { title: 'Sản phẩm đã lưu', onClick: () => history.push('/my-save-product') },
+    { title: 'Đăng xuất', onClick: signOut },
+  ];
+
   return (
     <Spin size="large" spinning={isLoading}>
       <Layout className="min-h-screen">
         {/* <SideBar /> */}
-        <Header className="bg-white h-12 flex items-center justify-between fixed z-10 w-full border-b-1 shadow-2xl ">
+        <Header className="bg-white flex items-center justify-between fixed z-10 w-full border-b-1 shadow-2xl py-5 z-50">
           {/* <img src={logo} alt="logo" className="cursor-pointer" /> */}
           <div className="flex flex-row h-full items-center gap-x-3">
             {/* <Link to="/"> */}
-            <h4 onClick={() => history.push('/')}>SSG SHOP</h4>
+            <h4 className="cursor-pointer" onClick={() => history.push('/')}>
+              SSG SHOP
+            </h4>
             {/* </Link> */}
 
             <span onClick={() => history.push('/product')}>Sản phẩm</span>
@@ -145,25 +160,44 @@ export default function MainLayout(props: IProps) {
             <SearchOutlined className="text-black mr-4" />
             <QuestionCircleOutlined className="text-black mr-4" />
             <BellOutlined className="text-black mr-4" />
-            <Button type="text" onClick={() => setLoginVisible(true)}>
-              Đăng nhập
-            </Button>
-            <Button onClick={() => setRegisterVisible(true)}>Đăng kí</Button>
-            {/* <Dropdown
-              overlay={
-                <Menu className="p-2">
-                  <Menu.Item>Sign out</Menu.Item>
-                </Menu>
-              }
-              placement="bottomRight"
-            >
-              <div className="flex items-center cursor-default">
-                <div className="w-8 h-8 rounded-full flex justify-center items-center overflow-hidden mr-2">
-                  <img src={avatar} alt="avatar" />
+            {user && (
+              <Dropdown
+                overlay={
+                  <Menu className="">
+                    {userMenu.map((item, index) => (
+                      <Menu.Item key={item.title} onClick={item.onClick}>
+                        {item.title}
+                      </Menu.Item>
+                    ))}
+                  </Menu>
+
+                  //   <>
+                  //     <Menu className="">
+                  //       <Menu.Item onClick={() => history.push('/profile')}>Profile</Menu.Item>
+                  //     </Menu>
+                  //     <Menu className="">
+                  //       <Menu.Item onClick={signOut}>Sign out</Menu.Item>
+                  //     </Menu>
+                  //   </>
+                }
+                placement="bottomRight"
+              >
+                <div className="flex items-center cursor-default">
+                  <div className="w-8 h-8 rounded-full flex justify-center items-center overflow-hidden mr-2">
+                    <img src={user?.imgURL || `https://joeschmoe.io/api/v1/${user?.fullname}`} alt="avatar" />
+                  </div>
+                  <div className="para-3 text-black">{user.fullname}</div>
                 </div>
-                <div className="para-3 text-white">Hung</div>
+              </Dropdown>
+            )}
+            {!user && (
+              <div>
+                <Button type="text" onClick={() => setLoginVisible(true)}>
+                  Đăng nhập
+                </Button>
+                <Button onClick={() => setRegisterVisible(true)}>Đăng kí</Button>
               </div>
-            </Dropdown> */}
+            )}
           </div>
         </Header>
         {/* <Sider
@@ -206,9 +240,9 @@ export default function MainLayout(props: IProps) {
         </Layout>
       </Layout>
       <LoginModal
+        onRegisterClick={onRegisterClick}
         isModalVisible={loginVisible}
         onCancel={() => setLoginVisible(false)}
-        onRegisterClick={onRegisterClick}
       />
       <RegisterModal
         isModalVisible={registerVisible}

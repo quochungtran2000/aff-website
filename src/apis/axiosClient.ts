@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+
 import queryString from 'query-string';
 
 const axiosClient: AxiosInstance = axios.create({
@@ -17,7 +18,7 @@ axiosClient.interceptors.request.use((config: any) => {
 });
 
 axiosClient.interceptors.response.use((response) => {
-  return response.data;
+  return response;
 });
 
 export default axiosClient;

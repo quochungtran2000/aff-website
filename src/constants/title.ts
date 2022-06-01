@@ -19,6 +19,16 @@ export const titles: {
     setTitle: (key) => `Chi tiết sản Phẩm ${key}`,
   },
   {
+    path: '/profile',
+    param: '',
+    setTitle: () => `Thông tin tài khoản`,
+  },
+  {
+    path: '/post',
+    param: '',
+    setTitle: () => `Bài viết`,
+  },
+  {
     path: '*',
     param: '',
     setTitle: () => 'Trang không tồn tại',

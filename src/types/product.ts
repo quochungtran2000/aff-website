@@ -1,24 +1,35 @@
+export type ProductVariant = {
+  sku: string;
+  productId: string;
+  variantName: string;
+  variantImageUrl: string;
+  listPrice: number;
+  salePrice: number;
+  isSale: boolean;
+  discountPercent: number;
+  images?: string[];
+};
+
 export type ProductResponse = {
   productId: string;
-  productName: string;
-  productUrl: string;
+  name: string;
+  originalUrl: string;
   thumbnail: string;
-  isSale: boolean;
-  salePrice: number;
-  discountPercent: number;
   average: number;
   sold: number;
   description: string;
   merchant: string;
   slug: string;
+  createdAt: Date;
+  updatedAt: Date;
+  lastestCrawlAt: Date;
+  variants: ProductVariant[];
 };
 
 export type ProductTemplateResponse = {
   productTemplateId: number;
   productName: string;
   thumbnail: string;
-  price: number;
-  average: number;
   slug: string;
   createdAt: string;
   updatedAt: string;
@@ -33,11 +44,12 @@ export type ProductTemplateDetailResponse = {
   slug: string;
   createdAt: string;
   updatedAt: string;
-  products: ProductResponse[];
+  items: ProductResponse[];
 };
 
 export type ProductTemplateQuery = {
   page?: number;
   page_size?: number;
   search?: string;
+  categoryId?: number;
 };
