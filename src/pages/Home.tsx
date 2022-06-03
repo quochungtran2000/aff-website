@@ -46,7 +46,7 @@ const RenderSession = (props: IProps) => {
   return (
     <section className={`bg-${index % 2 === 0 ? 'white' : 'gray-100'} w-full`} key={index}>
       <div className="grid grid-cols-12 gap-4 py-6">
-        <div className="col-start-3 col-span-8 bg-dark">
+        <div className="col-start-3 col-span-8">
           <div className="flex justify-between">
             <div className="space-y-2 pb-4">
               {!loading && <h5 className="font-bold leading-tight">{category.title}</h5>}

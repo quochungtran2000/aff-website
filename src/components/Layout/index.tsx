@@ -78,6 +78,7 @@ export default function MainLayout(props: IProps) {
   const userMenu = [
     { title: 'Thông tin cá nhân', onClick: () => history.push('/profile') },
     { title: 'Đăng bài', onClick: () => history.push('/create-post') },
+    { title: 'Bài viết của tôi', onClick: () => history.push('/my-post') },
     { title: 'Bài viết đã lưu', onClick: () => history.push('/my-save-post') },
     { title: 'Sản phẩm đã lưu', onClick: () => history.push('/my-save-product') },
     { title: 'Đăng xuất', onClick: signOut },
@@ -164,7 +165,7 @@ export default function MainLayout(props: IProps) {
               <Dropdown
                 overlay={
                   <Menu className="">
-                    {userMenu.map((item, index) => (
+                    {userMenu.map((item) => (
                       <Menu.Item key={item.title} onClick={item.onClick}>
                         {item.title}
                       </Menu.Item>

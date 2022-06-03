@@ -2,18 +2,26 @@ import { ReactNode, createContext, useContext, useEffect, useState, useCallback 
 
 import { AuthApi } from 'apis/authApi';
 import { Spin } from 'antd';
-import { User } from '../types';
+import { ProductTemplateResponse, User } from '../types';
 import jwtDecode from 'jwt-decode';
 import notification from 'utils/notification';
 import { Category } from 'types/category';
 import { CategoryApi } from 'apis/categoryApi';
+import postApi from 'apis/postApi';
+import { Post } from 'types/post';
+import { ProductApi } from 'apis/productApi';
 
 type UserContextValues = {
   user?: User;
   category: Category[];
+  posts: Post[];
+  savePosts: Post[];
+  saveProducts: ProductTemplateResponse[];
   setUser: (data: User) => void;
   getUser: () => void;
   signOut: () => void;
+  refetchSavePost: () => void;
+  refetchSaveProduct: () => void;
 };
 
 const UserContext = createContext<UserContextValues>(undefined as never);
@@ -30,6 +38,9 @@ const UserProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   });
   const [category, setCategory] = useState<Category[]>([]);
   const [isLoading, SetIsLoading] = useState<boolean>(false);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [savePosts, setSavePosts] = useState<Post[]>([]);
+  const [saveProducts, setSaveProducts] = useState<ProductTemplateResponse[]>([]);
 
   const getUser = useCallback(() => {
     AuthApi.me()
@@ -41,6 +52,26 @@ const UserProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   const getCategory = useCallback(() => {
     CategoryApi.getCategory()
       .then(({ data }) => setCategory(data))
+      .catch((error) => console.log({ error }));
+  }, []);
+
+  const getPosts = useCallback(() => {
+    postApi
+      .getPosts({ page: 1, pageSize: 4 })
+      .then(({ data: { data } }) => setPosts(data))
+      .catch((error) => console.log({ error }));
+  }, []);
+
+  const getSavePost = useCallback(() => {
+    postApi
+      .mySavePost()
+      .then(({ data: { data } }) => setSavePosts(data))
+      .catch((error) => console.log({ error }));
+  }, []);
+
+  const getSaveProduct = useCallback(() => {
+    ProductApi.getMySaveProduct()
+      .then(({ data: { data } }) => setSaveProducts(data))
       .catch((error) => console.log({ error }));
   }, []);
 
@@ -59,6 +90,17 @@ const UserProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     getCategory();
   }, [getCategory]);
 
+  useEffect(() => {
+    getPosts();
+  }, [getPosts]);
+
+  useEffect(() => {
+    getSaveProduct();
+  }, [getSaveProduct]);
+
+  useEffect(() => {
+    getSavePost();
+  }, [getSavePost]);
   const signOut = () => {
     localStorage.removeItem('token');
     setUser(undefined);
@@ -66,7 +108,20 @@ const UserProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   };
 
   return (
-    <UserContext.Provider value={{ user, category, getUser, signOut, setUser: handleSetUser }}>
+    <UserContext.Provider
+      value={{
+        user,
+        category,
+        getUser,
+        signOut,
+        setUser: handleSetUser,
+        posts,
+        savePosts,
+        saveProducts,
+        refetchSavePost: getSavePost,
+        refetchSaveProduct: getSaveProduct,
+      }}
+    >
       <Spin size="large" spinning={isLoading}>
         {children}
       </Spin>

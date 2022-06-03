@@ -14,8 +14,8 @@ export const titles: {
     setTitle: () => 'Danh sách sản phẩm',
   },
   {
-    path: '/product/:productId',
-    param: 'productId',
+    path: '/product/:slug',
+    param: 'slug',
     setTitle: (key) => `Chi tiết sản Phẩm ${key}`,
   },
   {
@@ -26,7 +26,32 @@ export const titles: {
   {
     path: '/post',
     param: '',
-    setTitle: () => `Bài viết`,
+    setTitle: () => `Danh sách bài viết`,
+  },
+  {
+    path: '/create-post',
+    param: '',
+    setTitle: () => `Đăng bài viết`,
+  },
+  {
+    path: '/update-post/:postId',
+    param: '',
+    setTitle: () => `Cập nhật bài viết`,
+  },
+  {
+    path: '/my-save-product',
+    param: '',
+    setTitle: () => `Danh sách sản phẩm đã lưu`,
+  },
+  {
+    path: '/my-save-post',
+    param: '',
+    setTitle: () => `Danh sách bài viết đã lưu`,
+  },
+  {
+    path: '/my-post',
+    param: '',
+    setTitle: () => `Bài viết của tôi`,
   },
   {
     path: '*',

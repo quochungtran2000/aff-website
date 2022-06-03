@@ -127,3 +127,7 @@ body,
 .customTable .ant-table-thead .ant-table-cell::before {
   width: 0 !important;
 }
+
+.ant-card .ant-card-body{
+  padding: '1rem' !important;
+}

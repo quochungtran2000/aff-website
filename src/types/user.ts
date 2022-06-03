@@ -13,7 +13,7 @@ export interface UserInput {
   phoneNumber: string;
 }
 export interface User extends UserInput {
-  userId: string;
+  userId: number;
   role: string;
   imgURL?: string;
 }

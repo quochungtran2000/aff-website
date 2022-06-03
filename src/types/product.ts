@@ -53,3 +53,10 @@ export type ProductTemplateQuery = {
   search?: string;
   categoryId?: number;
 };
+
+export type ProductComment = {
+  customerName: string;
+  customerSatisfactionLevel: string;
+  content: string;
+  images?: string[];
+};
